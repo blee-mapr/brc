@@ -7,6 +7,7 @@ import configargparse
 import sh
 from sh import rsync
 import componentcopy
+import reindex
 
 
 def setup():
@@ -22,6 +23,12 @@ def main():
     if cmd == 'copy':
         cc = componentcopy
         cc.doComponentCopy()
+    elif cmd == 'json':
+        cc = componentcopy
+        cc.generateJson()
+    elif cmd == 'reindex':
+        ri = reindex
+        ri.doReindex()
     else:
         print 'Unknown command given: %s' % cmd
     return 0
