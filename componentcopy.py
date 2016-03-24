@@ -2,8 +2,10 @@ import os
 import sys
 import json
 import configargparse
+import sh
 from sh import cp, rm
 from sh import rsync
+log = open('/root/blee-temp/scripts/brc/logfile.txt', 'w+')
 
 # eco4Directory=/root/stage.mapr.com/backups/releases/ecosystem-4.x
 # eco5Directory=/root/stage.mapr.com/backups/releases/ecosystem-5.x
@@ -12,9 +14,11 @@ from sh import rsync
 # eco5_redhat=$eco5Directory/redhat
 # eco5_ubuntu=$eco5Directory/ubuntu/dists/binary
 
+rsync = rsync.bake('-av')
+
 OS_LIST = {'r': 'redhat', 'u': 'ubuntu'}
-PACKAGETYPE_DICT = {'redhat': 'redhat', 'ubuntu': 'ubuntu/dist/binary'}
-PKG_DICT = {'r': 'yum/qa/opensource.release', 'u': 'qa/opensource.release/dist/binary'}
+PACKAGETYPE_DICT = {'redhat': 'redhat', 'ubuntu': 'ubuntu/dists/binary'}
+PKG_DICT = {'r': 'yum/qa/opensource.release', 'u': 'qa/opensource.release/dists/binary'}
 BASE_DIR = '/root/stage.mapr.com/backups/releases'
 ECO_4X_DIR = BASE_DIR + '/ecosystem-4.x'
 ECO_5X_DIR = BASE_DIR + '/ecosystem-5.x'
@@ -67,14 +71,15 @@ def doComponentCopy():
         destOS = eco[1:]
         pattern = '*%s*%s*' % (cname, cver)
 
-        for os in destOS:
-            print('Copying %s-%s to Ecosystem %s.x -> %s' % (cname, cver, destEco, OS_LIST[os]))
-            # Remove existing files
-            WORKDIR = '%s/%s' % (ECO_DIR_DICT[destEco], PACKAGETYPE_DICT[OS_LIST[os]])
-            # rm('-v', pattern)
+        for operSys in destOS:
+            print('Copying %s-%s to Ecosystem %s.x -> %s' % (cname, cver, destEco, OS_LIST[operSys]))
+            # Remove existing files of the same component/version
+            WORKDIR = '%s/%s' % (ECO_DIR_DICT[destEco], PACKAGETYPE_DICT[OS_LIST[operSys]])
+            os.chdir(WORKDIR)
+            rm('-fv', sh.glob(pattern), _out=log)
             # Rsync over the new files
-            RSYNC_SRC = '%s/%s/%s' % (RELEASE_DIR, PKG_DICT[os], pattern)
-            # rsync('-av --progress', RSYNC_SRC, '.')
+            RSYNC_SRC = '%s/%s/%s' % (RELEASE_DIR, PKG_DICT[operSys], pattern)
+            rsync(sh.glob('%s' % RSYNC_SRC), '.')
     return 0
 
 

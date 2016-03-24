@@ -35,11 +35,14 @@ def doReindex():
             # Recreate the index for the repository
             if os is 'r':
                 print 'Recreating index for Redhat: %s' % REINDEX_CMD_LIST['r']
-                # sh.cd(ECO_DIR_DICT[destEco])
-                run = sh.Command('which createrepo')
-                run()
+                sh.cd('%s/redhat' % ECO_DIR_DICT[destEco])
+                sh.createrepo('.', _out=logfile)
             elif os is 'u':
                 print 'Recreating index for Ubuntu: %s' % REINDEX_CMD_LIST['u']
+                sh.cd('%s/ubuntu' % ECO_DIR_DICT[destEco])
+                sh.pwd(_out=logfile)
+                run = sh.Command('./update-archive.sh', '>', 'deb_reindex.log')
+                run(_out=logfile)
             else:
                 print 'This is an invalid OS'
 
