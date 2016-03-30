@@ -75,7 +75,7 @@ def doComponentCopy():
             print('Copying %s-%s to Ecosystem %s.x -> %s' % (cname, cver, destEco, OS_LIST[operSys]))
             # Remove existing files of the same component/version
             WORKDIR = '%s/%s' % (ECO_DIR_DICT[destEco], PACKAGETYPE_DICT[OS_LIST[operSys]])
-            os.chdir(WORKDIR)
+	    os.chdir(WORKDIR)
             rm('-fv', sh.glob(pattern), _out=log)
             # Rsync over the new files
             RSYNC_SRC = '%s/%s/%s' % (RELEASE_DIR, PKG_DICT[operSys], pattern)
