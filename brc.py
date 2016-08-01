@@ -1,4 +1,4 @@
-#!/Users/blee/workspace/blee/brcli/venv/bin/python
+#!./venv/bin/python
 
 import os
 import sys
