@@ -23,11 +23,11 @@ def setup():
 
 
 def doInstallerReindex():
-	sh.cd('%s/redhat/' % BASE_DIR)
+	sh.cd('%s/installer/redhat/' % (BASE_DIR))
 	sh.createrepo('.')
-	sh.cd('%s/ubuntu' % BASE_DIR)
-	run = sh.Command('./update-archive.sh .')
-	run()
+	sh.cd('%s/installer/ubuntu' % (BASE_DIR))
+	run = sh.Command('./update-archive.sh')
+	run('.')
 	return True
 
 
