@@ -5,6 +5,11 @@ from sh import cp, rm, rsync
 import sh
 
 rsync = rsync.bake('-av')
+INSTALLER_VER = 'installer-ui1.3'
+BASE_DIR = '/root/stage.mapr.com/backups/releases'
+RELEASE_DIR = '/home/MAPRTECH/share/packages'
+RSYNC_EXTRA_OPTS = '--progress'
+
 
 def setup():
 	p = configargparse.getArgumentParser()
@@ -16,14 +21,20 @@ def setup():
 
 	return options[0]
 
+
+def doInstallerReindex():
+	sh.cd('%s/redhat/' % BASE_DIR)
+	sh.createrepo('.')
+	sh.cd('%s/ubuntu' % BASE_DIR)
+	run = sh.Command('./update-archive.sh .')
+	run()
+	return True
+
+
 def doInstallerCopy():
 	options = setup()
-	INSTALLER_VER = 'installer-ui1.3'
-	BASE_DIR = '/root/stage.mapr.com/backups/releases'
-	RELEASE_DIR = '/home/MAPRTECH/share/packages'	
-	RSYNC_EXTRA_OPTS = '--progress'
 
-	# Put mapr-setup.sh on root for installer folder	
+	# Put mapr-setup.sh on root for installer folder
 	output = rsync(RSYNC_EXTRA_OPTS, '%s/yum/qa/%s/mapr-setup.sh' % (RELEASE_DIR, INSTALLER_VER), '%s/installer/' % BASE_DIR)
 
 	# Redhat
@@ -32,11 +43,11 @@ def doInstallerCopy():
 
 	# Ubuntu
 	RSYNC_SRC = '%s/qa/%s/mapr-*' % (RELEASE_DIR, INSTALLER_VER)
-	output = rsync(RSYNC_EXTRA_OPTS, sh.glob(RSYNC_SRC), '%s/installer/ubuntu/' % BASE_DIR) 
+	output = rsync(RSYNC_EXTRA_OPTS, sh.glob(RSYNC_SRC), '%s/installer/ubuntu/' % BASE_DIR)
 
 	RSYNC_SRC = '%s/qa/%s/dists/binary/mapr-*' % (RELEASE_DIR, INSTALLER_VER)
-	output = rsync(RSYNC_EXTRA_OPTS, sh.glob(RSYNC_SRC), '%s/installer/ubuntu/dists/binary/' % BASE_DIR) 
-
+	output = rsync(RSYNC_EXTRA_OPTS, sh.glob(RSYNC_SRC), '%s/installer/ubuntu/dists/binary/' % BASE_DIR)
+	doInstallerReindex()
 
 if __name__ == "__main__":
 	setup()
