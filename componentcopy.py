@@ -7,13 +7,6 @@ from sh import cp, rm
 from sh import rsync
 log = open('/root/blee-temp/scripts/brc/logfile.txt', 'w+')
 
-# eco4Directory=/root/stage.mapr.com/backups/releases/ecosystem-4.x
-# eco5Directory=/root/stage.mapr.com/backups/releases/ecosystem-5.x
-# eco4_redhat=$eco4Directory/redhat
-# eco4_ubuntu=$eco4Directory/ubuntu/dists/binary
-# eco5_redhat=$eco5Directory/redhat
-# eco5_ubuntu=$eco5Directory/ubuntu/dists/binary
-
 rsync = rsync.bake('-av')
 
 OS_LIST = {'r': 'redhat', 'u': 'ubuntu'}
@@ -29,8 +22,6 @@ RELEASE_DIR = '/home/MAPRTECH/share/packages'
 def setup():
     p = configargparse.getArgumentParser()
     p.add_argument('-c', '--component', required=True, help='Component [name]-[version]. ie: hbase-1.1.1')
-    # p.add_argument('--cname', required=True, help='Component Name')
-    # p.add_argument('--cver', required=True, help='Component Version')
     p.add_argument('--dest', required=True, help='Destination - Example: 4ru = ecosystem4 redhat and ubuntu, supports multiple comma separated values ie. 4ru,5ru')
     try:
         options = p.parse_known_args()

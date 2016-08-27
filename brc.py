@@ -8,7 +8,7 @@ import sh
 from sh import rsync
 import componentcopy
 import reindex
-
+import installercopy
 
 def setup():
     p = configargparse.ArgParser(default_config_files=['./config.ini'])
@@ -23,6 +23,9 @@ def main():
     if cmd == 'copy':
         cc = componentcopy
         cc.doComponentCopy()
+    elif cmd == 'installercopy':
+        installercp = installercopy
+        installercp.doInstallerCopy()
     elif cmd == 'json':
         cc = componentcopy
         cc.generateJson()
