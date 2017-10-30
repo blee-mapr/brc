@@ -26,6 +26,9 @@ def main():
     elif cmd == 'installercopy':
         installercp = installercopy
         installercp.doInstallerCopy()
+    elif cmd == 'reindex-installer':
+        installercp = installercopy
+        installercp.doInstallerReindex()
     elif cmd == 'json':
         cc = componentcopy
         cc.generateJson()
